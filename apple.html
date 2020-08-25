@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+        body {
+          color: black; background: white;
+          margin:0;
+        }
+        h1 {
+          font-size:45px;
+          text-align:center;
+          padding:20px;
+          border-bottom:2px solid gray;
+          margin:0;
+        }
+        #maindiv {
+          display:grid;
+          grid-template-columns:1fr 3fr;
+        }
+        a {
+          color:black;
+        }
+        .left {
+          border-right:gray solid 2px;
+        }
+        .right {
+          padding-left:20px;
+          padding-right:20px;
+        }
+        .menu {
+          border-bottom:gray 2px solid;
+        }
+        #active {
+          color:red;
+        }
+        #buttons {
+          display:grid;
+          grid-template-columns:1fr 1fr;
+        }
+        .button1 {
+          text-align: left;
+          padding:5px;
+        }
+        .button2 {
+          text-align: right;
+          padding:5px;
+        }
+        .comlogo {
+          text-align:center;
+          padding:40px;
+        }
+    </style>
+    <title>Big 5 Tech - Apple</title>
+  </head>
+  <body>
+    <h1>Big Five Tech Companies</h1>
+    <div id="maindiv">
+      <div class="left">
+        <nav class="menu">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li>Contact</li>
+          </ul>
+        </nav>
+        <ol>
+          <li><a href="google.html"><strong><strong>G</strong></strong>oogle</a></li>
+          <li><a href="amazon.html"><b><u>A</u></b>mazon</a></li>
+          <li><a href="facebook.html"><b>F</b>acebook</a></li>
+          <li><a href="apple.html" id="active"><b>A</b>pple<br></a></li>
+          <li><a href="microsoft.html"><b>M</b>icrosoft<br><a></li>
+        </ol>
+        <div id="buttons">
+          <div class="button1">
+            <button onclick="location.href='facebook.html'">Previous</button>
+          </div>
+          <div class="button2">
+            <button onclick="location.href='microsoft.html'">Next</button>
+          </div>
+       </div>
+      </div>
+      <div class="right">
+        <div class="comlogo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/64px-Apple_logo_black.svg.png">
+        </div>
+        <h2>Apple</h2>
+        <h4>Company Info</h4>
+        <ul>
+          <li><strong>Industry</strong>: Computer hardware, Computer software, Consumer electronics, Cloud computing,<br>
+                      Digital distribution, Fabless silicon design, Semiconductors, Media, Financial technology,<br> Artificial intelligence</li>
+          <li><strong>Founded</strong>: April 1, 1976</li>
+          <li><strong>Founders</strong>: Steve Jobs, Steve Wozniak, Ronald Wayne</li>
+          <li><strong>Revenue</strong>: 260.174 billion US dollar (2019)</li>
+        </ul>
+        <p>
+          <span style="color:red;">Apple Inc. </span> is an American multinational technology company headquartered in Cupertino, California, that designs, develops, and sells consumer electronics, computer software, and online services.
+        </p>
+      </div>
+</html>

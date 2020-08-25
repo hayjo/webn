@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+        body {
+          color: black; background: white;
+          margin:0;
+        }
+        h1 {
+          font-size:45px;
+          text-align:center;
+          padding:20px;
+          border-bottom:2px solid gray;
+          margin:0;
+        }
+        #maindiv {
+          display:grid;
+          grid-template-columns:1fr 3fr;
+        }
+        a {
+          color:black;
+        }
+        .left {
+          border-right:gray solid 2px;
+        }
+        .right {
+          padding-left:20px;
+          padding-right:20px;
+        }
+        .menu {
+          border-bottom:gray 2px solid;
+        }
+        #active {
+          color:red;
+        }
+        #buttons {
+          display:grid;
+          grid-template-columns:1fr 1fr;
+        }
+        .button1 {
+          text-align: left;
+          padding:5px;
+        }
+        .button2 {
+          text-align: right;
+          padding:5px;
+        }
+        .comlogo {
+          text-align:center;
+          padding:40px;
+        }
+    </style>
+    <title>Big 5 Tech - Google</title>
+  </head>
+  <body>
+    <h1>Big Five Tech Companies</h1>
+    <div id="maindiv">
+      <div class="left">
+        <nav class="menu">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li>Contact</li>
+          </ul>
+        </nav>
+        <ol>
+          <li><a href="google.html" id="active"><strong><strong>G</strong></strong>oogle</a></li>
+          <li><a href="amazon.html"><b><u>A</u></b>mazon</a></li>
+          <li><a href="facebook.html"><b>F</b>acebook</a></li>
+          <li><a href="apple.html"><b>A</b>pple<br></a></li>
+          <li><a href="microsoft.html"><b>M</b>icrosoft<br><a></li>
+        </ol>
+        <div id="buttons">
+          <div class="button1"><button onclick="location.href='index.html'">Previous</button></div>
+          <div class="button2"><button onclick="location.href='amazon.html'">Next</button></div>
+       </div>
+      </div>
+      <div class="right">
+        <div class="comlogo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/196px-Google_2015_logo.svg.png">
+        </div>
+        <h2>Google</h2>
+        <h4>Company Info</h4>
+        <ul>
+          <li><strong>Industry</strong>: Internet, Cloud computing, Computer software, Computer hardware, Artificial intelligence, Advertising</li>
+          <li><strong>Founded</strong>: September 4, 1998</li>
+          <li><strong>Founders</strong>: Larry Page, Sergey Brin</li>
+          <li><strong>Revenue</strong>: 66,001,000,000 US dollar (2014)</li>
+        </ul>
+        <p>
+          <span style="color:red;">Google LLC</span> is an American multinational technology company that specializes in Internet-related services and products, which include online advertising technologies, a search engine, cloud computing, software, and hardware. It is considered one of the Big Four technology companies alongside Amazon, Apple and Microsoft.
+        </p>
+      </div>
+
+</html>

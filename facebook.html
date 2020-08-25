@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+        body {
+          color: black; background: white;
+          margin:0;
+        }
+        h1 {
+          font-size:45px;
+          text-align:center;
+          padding:20px;
+          border-bottom:2px solid gray;
+          margin:0;
+        }
+        #maindiv {
+          display:grid;
+          grid-template-columns:1fr 3fr;
+        }
+        a {
+          color:black;
+        }
+        .left {
+          border-right:gray solid 2px;
+        }
+        .right {
+          padding-left:20px;
+          padding-right:20px;
+        }
+        .menu {
+          border-bottom:gray 2px solid;
+        }
+        #active {
+          color:red;
+        }
+        #buttons {
+          display:grid;
+          grid-template-columns:1fr 1fr;
+        }
+        .button1 {
+          text-align: left;
+          padding:5px;
+        }
+        .button2 {
+          text-align: right;
+          padding:5px;
+        }
+        .comlogo {
+          text-align:center;
+          padding:40px;
+        }
+    </style>
+    <title>Big 5 Tech - Facebook</title>
+  </head>
+  <body>
+    <h1>Big Five Tech Companies</h1>
+    <div id="maindiv">
+      <div class="left">
+        <nav class="menu">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li>Contact</li>
+          </ul>
+        </nav>
+        <ol>
+          <li><a href="google.html"><strong><strong>G</strong></strong>oogle</a></li>
+          <li><a href="amazon.html"><b><u>A</u></b>mazon</a></li>
+          <li><a href="facebook.html" id="active"><b>F</b>acebook</a></li>
+          <li><a href="apple.html"><b>A</b>pple<br></a></li>
+          <li><a href="microsoft.html"><b>M</b>icrosoft<br><a></li>
+        </ol>
+        <div id="buttons">
+          <div class="button1">
+            <button onclick="location.href='amazon.html'">Previous</button>
+          </div>
+          <div class="button2">
+            <button onclick="location.href='apple.html'">Next</button>
+          </div>
+       </div>
+      </div>
+      <div class="right">
+        <div class="comlogo">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Facebook_Logo_%282019%29.svg/250px-Facebook_Logo_%282019%29.svg.png">
+        </div>
+        <h2>Facebook</h2>
+        <h4>Company Info</h4>
+        <ul>
+          <li><strong>Industry</strong>: Social media, Advertising</li>
+          <li><strong>Founded</strong>: February 4, 2004</li>
+          <li><strong>Founders</strong>: Mark Zuckerberg, Eduardo Saverin, Andrew McCollum, Dustin Moskovitz, Chris Hughes</li>
+          <li><strong>Revenue</strong>: 70.697 billion US dollar (2019)</li>
+        </ul>
+        <p>
+          <span style="color:red;">Facebook.com, Inc. </span>(stylized as FACEBOOK) is an American social media conglomerate corporation based in Menlo Park, California.
+        </p>
+      </div>
+</html>
