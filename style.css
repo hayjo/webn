@@ -15,7 +15,7 @@ h1 {
   grid-template-columns:1fr 3fr;
 }
 a {
-  color:black;
+  color:blue;
 }
 .left {
   border-right:gray solid 2px;
@@ -32,7 +32,11 @@ a {
 }
 #buttons {
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+}
+#buttons .buttons {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
 }
 .button1 {
   text-align: left;
@@ -45,6 +49,11 @@ a {
 .comlogo {
   text-align:center;
   padding:40px;
+}
+.handler {
+  background-color: black;
+  color: white;
+  margin:7px;
 }
 @media(max-width:800px) {
   #maindiv {
