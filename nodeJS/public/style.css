@@ -1,0 +1,74 @@
+
+body {
+  color: black; background: white;
+  margin:0;
+}
+h1 {
+  font-size:45px;
+  text-align:center;
+  padding:20px;
+  border-bottom:2px solid gray;
+  margin:0;
+}
+#maindiv {
+  display:grid;
+  grid-template-columns:1fr 3fr;
+}
+a {
+  color:blue;
+}
+.left {
+  border-right:gray solid 2px;
+}
+.right {
+  padding-left:20px;
+  padding-right:20px;
+}
+.menu {
+  border-bottom:gray 2px solid;
+}
+#active {
+  color:red;
+}
+#buttons {
+  display:grid;
+  grid-template-rows:1fr 1fr;
+}
+#buttons .buttons {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+}
+.button1 {
+  text-align: left;
+  padding:5px;
+  margin-left:0;
+}
+.button2 {
+  text-align: right;
+  margin-right: 0;
+  padding:5px;
+}
+.comlogo {
+  text-align:center;
+  padding:40px;
+}
+.handler {
+  background-color: black;
+  color: white;
+  margin:7px;
+}
+@media(max-width:800px) {
+  #maindiv {
+    display:block;
+  }
+  h1, .left, .menu {
+    border:none;
+  }
+  #left-top {
+    display:grid;
+    grid-template-columns: 2fr 1fr;
+  }
+  #left-top .list {
+    margin:0;
+  }
+   }
