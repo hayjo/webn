@@ -52,11 +52,32 @@ a {
   text-align:center;
   padding:40px;
 }
+.logo {
+  max-width: 200px;
+  max-height: 100px;
+}
 .handler {
   background-color: black;
   color: white;
   margin:7px;
 }
+
+#postform {
+  padding: 10px;
+}
+
+.edits {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+  color:inherit;
+  font-family:Times;
+}
+
+
 @media(max-width:800px) {
   #maindiv {
     display:block;
