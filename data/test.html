@@ -1,0 +1,50 @@
+
+<style>
+	#page-active {
+		background: #dcdad7;
+		cursor: default;
+	}
+	
+	.button-page {
+		background: transparent;
+		border: none;
+		border-radius: 10px;
+		cursor: pointer;	
+		float: left;
+		font-size: 12px;
+		margin: 0 0 25px 0;
+		width: 30px;
+		padding: 5px;
+	}
+
+	.button-page:hover{
+		background: #e8e6e4;
+	}
+
+</style>
+
+
+<div class="page">
+        <button class="button-page" onclick="location.href='/?page=30'"><</button>
+        <button class="button-page" onclick="location.href='/?page=31'">31</button>
+        <button class="button-page" onclick="location.href='/?page=32'">32</button>
+        <button class="button-page" onclick="location.href='/?page=33'">33</button>
+        <button class="button-page" id="page-active">34</button>
+        <button class="button-page" onclick="location.href='/?page=35'">35</button>
+        <button class="button-page" onclick="location.href='/?page=36'">36</button>
+        <button class="button-page" onclick="location.href='/?page=37'">37</button>
+        <button class="button-page" onclick="location.href='/?page=38'">38</button>
+        <button class="button-page" onclick="location.href='/?page=39'">39</button>
+        <button class="button-page" onclick="location.href='/?page=40'">40</button>
+        <button class="button-page" onclick="location.href='/?page=41'">></button>
+</div>
+
+					<form method="post" class="sort-by">
+						 <select name="sortBy">
+						   <option value="title-asc">Title 오름차순</option>
+						   <option value="title-diesc">Title 내림차순</option>
+						   <option value="data-asc">작성일 오름차순</option>
+						   <option value="data-desc">작성일 내림차순</option>
+						 <select>
+						 <input type="submit" value="Sort" class="sort-button">
+                     </form>
