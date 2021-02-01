@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+	<style>
+		html, body {
+			background-color: whitesmoke;
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			overflow: hidden;
+		}
+		.banner {
+		  color: #333333;
+		  margin: 0;
+		  padding: 5px;
+		  text-align: center;
+		  display: block;
+		}
+		h1 {
+			font-size: 40px;
+		}
+		
+		nav {
+			display: grid;
+			grid-template-columns: 1.5fr 1fr;
+			background-color: #333333;
+		}
+		
+		.search-form {
+			text-align: right;
+			padding-right: 20px;
+		}
+		
+		.search-bar {
+			font-size: 14px;
+			padding: 3px;
+			margin: 5px;
+		}
+		
+		.search-button {
+		  background: #8E82A2;
+		  border: none;
+		  border-radius: 3px;
+		  color: whitesmoke;
+		  cursor: pointer;	
+		  font-size: 16px;
+		  padding: 4px 6px 6px 6px;
+		}
+
+		.search-button:hover {
+			background-color: #A59BB5;
+		}
+		
+		ul {
+		  list-style-type: none;
+		  margin: 0;
+		  padding: 0;
+		  overflow: hidden;
+		}
+		li {
+		  color: white;
+		  float: left;
+		  padding: 10px 15px 10px 15px;
+		}
+		
+		li:hover {
+			background-color: #111111;
+		}
+		
+		.left {
+			display: grid;
+			background-color: #D1CCD9;
+
+		}
+		
+		.content-edit {
+			display: none;
+		}
+		
+		.main {
+			display: grid;
+			grid-template-columns: 1fr 2fr;
+			height: 100%;
+		}
+		
+		.right {
+			background-color: gray;
+		}
+		
+		.sort-by select {
+		  -moz-appearance: none;
+		  -webkit-appearance: none;
+		  appearance: none;
+			
+		  font-family: "Noto Sansf KR", sans-serif;
+		  font-size: 13px;
+		  font-weight: 300;
+		  line-height: 1.5;
+
+		  color: #444;
+		  background-color: #fff;
+
+		  padding: 0.4em 0.4em 0.4em 0.6em;
+		  margin: 0;
+
+		  border: 1px solid #aaa;
+		  border-radius: 0.5em;
+		  box-shadow: 0 1px 0 1px rgba(0, 0, 0, 0.04);
+		}
+		
+		.sort-button {
+		  background: #8E82A2;
+		  border: 1px solid #aaa;
+		  border-radius: 0.5em;
+		  color: whitesmoke;
+		  cursor: pointer;	
+		  font-size: 16px;
+		  padding: 4px 6px 6px 6px;
+		}
+		
+		.sort-button:hover {
+			background-color: #A59BB5;
+		}
+		
+		@media(max-width: 800px) {
+			.main {
+				grid-template-columns: none;
+			}
+			
+			h1 {
+				font-size: 30px;
+			}
+			
+			nav {
+			display: grid;
+			grid-template-columns: none;
+			grid-template-rows: 1fr 1fr;
+		}
+		  }
+	</style>
+    <title>Lorem ipsum dolor sit amet</title>
+	<script>
+	  function fetchPage(name){
+		fetch(name).then(function(response){
+		  response.text().then(function(text){
+			document.querySelector('article').innerHTML = text;
+		  })
+		});
+	  }
+	  </script>
+	  <script>
+		 window.addEventListener("load", function() {
+			var valid = ['title-asc', 'title-desc', 'created-asc', 'created-desc'];
+			var validValues = ['Title 오름차순', 'Title 내림차순', '작성일 오름차순', '작성일 내림차순'];
+			var sortForm = `<select name="sortBy">`;
+			for(var i in valid){
+			  sortForm += `<option value="${valid[i]}">${validValues[i]}</option>`
+			};
+			sortForm += `						 </select>
+							 <input type="submit" value="Sort" class="sort-button">
+						 </form>`;
+			document.querySelector('.sort-by').innerHTML = sortForm;
+	});
+	</script>
+	  <script>
+		var hash_title = location.hash.replace("!", "").replace("#", "");
+		if(hash_title){
+			fetch('/get-id/' + hash_title).then(function(response){
+				response.json().then(function(data){
+					viewContent(data[0]['id']);
+				})
+			})
+		}
+		var viewContent = function(id){
+			fetch('/content/' + String(id)).then(function(response){
+				response.json().then(function(data){
+				var content = `<h2>${data[0]['title']}</h2>
+								<p>${data[0]['description']}</p>`;
+				document.querySelector('article').innerHTML = content;
+				var content_edit = document.querySelectorAll('.content-edit');
+				for (var i=0;i<content_edit.length;i++){
+					content_edit[i].style.display = 'inline';
+				};
+				});
+			});
+		}
+		
+		var viewPage = function(pageNum){
+			//var sortBy = document.querySelector('.sort-selected').value;
+			var sortBy = 'title-desc';
+			fetch('/page/' + pageNum + '/' + sortBy).then(function(response){
+				response.json().then(function(data){
+					var pageBar = '<div class="page-bar">';
+					var topicList = `<ol start=${(data['pageInfo']['curPage']-1)*15+1}>`;
+					for (var i in data['topicList']){
+						var topic = data['topicList'][i];
+						topicList +=  `<li><a href="#!${topic.title}" onclick="viewContent(${topic.id});">${topic.title}</a></li>`;
+					}
+					topicList += '</ol>';
+					
+					var j = data['pageInfo']['blockFirst'];
+					if (data['pageInfo']['curBlock'] > 1){  // 첫 페이지가 아니면
+						pageBar += `<button class="button-page" onclick="viewPage(${j-1})"><</button>`;
+					}
+					while (j<data['pageInfo']['blockLast']+1){
+						if (j === data['pageInfo']['curPage']){  // 현재 페이지인 경우
+							pageBar += `<button class="button-page" onclick="viewPage(${j})" id="current-page">${j}</button>`;
+						} else {
+							pageBar += `<button class="button-page" onclick="viewPage(${j})">${j}</button>`;
+						}
+
+						j++;
+					}
+					if (data['pageInfo']['curBlock'] < data['pageInfo']['totalBlock']){  // 마지막 페이지가 아니면
+						pageBar += `<button class="button-page" onclick="viewPage(${j+1})">></button>`;
+					}
+					pageBar += '</div>'
+					document.querySelector('.topic-list').innerHTML = topicList;
+					document.querySelector('.page-bar').innerHTML = pageBar;
+				});
+			});
+		}
+		
+		window.addEventListener("load", function(){
+			fetch('/page/11/title-desc').then(function(response){
+				response.json().then(function(data){
+					var pageBar = '<div class="page-bar">';
+					var topicList = `<ol start=${(data['pageInfo']['curPage']-1)*15+1}>`;
+					for (var i in data['topicList']){
+						var topic = data['topicList'][i];
+						topicList +=  `<li><a href="#!${topic.title}" onclick="viewContent(${topic.id});">${topic.title}</a></li>`;
+					}
+					topicList += '</ol>';
+					
+					var j = data['pageInfo']['blockFirst'];
+					if (data['pageInfo']['curBlock'] > 1){  // 첫 페이지가 아니면
+						pageBar += `<button class="button-page" onclick="viewPage(${j-1})"><</button>`;
+					}
+					while (j<data['pageInfo']['blockLast']+1){
+						if (j === data['pageInfo']['curPage']){  // 현재 페이지인 경우
+							pageBar += `<button class="button-page" onclick="viewPage(${j})" id="current-page">${j}</button>`;
+						} else {
+							pageBar += `<button class="button-page" onclick="viewPage(${j})">${j}</button>`;
+						}
+
+						j++;
+					}
+					if (data['pageInfo']['curBlock'] < data['pageInfo']['totalBlock']){  // 마지막 페이지가 아니면
+						pageBar += `<button class="button-page" onclick="viewPage(${j+1})">></button>`;
+					}
+					pageBar += '</div>'
+					document.querySelector('.topic-list').innerHTML = topicList;
+					document.querySelector('.page-bar').innerHTML = pageBar;
+				});
+			});
+		});
+	  </script>
+  </head>
+  <body>
+    <div class="banner">
+      <h1 onclick="/">Lorem ipsum dolor sit amet</h1>
+    </div>
+	<nav class="edit">
+		<ul>
+		  <li>AuthorTable</li>
+		  <li>Create</li>
+		  <li class="content-edit">Update</li>
+		  <li class="content-edit">Delete</li>
+		</ul>
+		 <div class="search-form">
+		<form action="search" method="get">
+	<input type="text" class="search search-bar" name="query" placeholder="검색어를 입력하세요." value="">
+	<input type="submit" class="search search-button" value="Search" >
+	    </form>	
+		</div>
+		</nav>
+	<div class="main">
+    <div class="left">
+      <div class="topic">
+		  <form action="" method="get" class="sort-by">
+		  </form>
+		  <div class="topic-list">
+		  </div>
+		  <div class="page-bar">
+		  </div>
+      </div>
+    </div>
+    <div class="right">	
+		<article>asfdfasd</article>
+    </div>
+	 </div>
+  </body>
+</html>
