@@ -4,16 +4,21 @@
     <meta charset="utf-8">
 	<style>
 		html, body {
+			display: grid;
 			background-color: whitesmoke;
 			height: 100%;
 			width: 100%;
 			margin: 0;
-			overflow: hidden;
+			overflow-x: hidden;
+			overflow-y: grid;
+		}
+		
+		body {
+			grid-template-rows: 1fr 9fr;
 		}
 		.banner {
 		  color: #333333;
 		  margin: 0;
-		  padding: 5px;
 		  text-align: center;
 		  display: block;
 		}
@@ -25,6 +30,8 @@
 			display: grid;
 			grid-template-columns: 1.5fr 1fr;
 			background-color: #333333;
+			margin: 0;
+			grid-template-rows: none;
 		}
 		
 		.search-form {
@@ -52,26 +59,25 @@
 			background-color: #A59BB5;
 		}
 		
-		ul {
+		.edit ul {
 		  list-style-type: none;
 		  margin: 0;
 		  padding: 0;
 		  overflow: hidden;
 		}
-		li {
+		.edit li {
 		  color: white;
 		  float: left;
 		  padding: 10px 15px 10px 15px;
 		}
 		
-		li:hover {
+		.edit li:hover {
 			background-color: #111111;
 		}
 		
 		.left {
-			display: grid;
+			margin: 0;
 			background-color: #D1CCD9;
-
 		}
 		
 		.content-edit {
@@ -80,12 +86,13 @@
 		
 		.main {
 			display: grid;
-			grid-template-columns: 1fr 2fr;
-			height: 100%;
+			grid-template-columns: 1fr 3fr;
+			grid-template-rows: none;
 		}
 		
 		.right {
 			background-color: gray;
+			padding: 20px;
 		}
 		
 		.sort-by select {
@@ -123,9 +130,59 @@
 			background-color: #A59BB5;
 		}
 		
+		.topic {
+			margin: 0;
+		}
+		
+
+		.topic-list ol {
+			width: 90%;
+		    padding: 10px 30px 20px 50px;
+		}
+		
+		.topic-list li {
+		  color: inherit;
+		  padding: 10px;
+		}
+	
+		.topic-list a:hover {
+			background-color: inherit;
+			color: red;
+		}
+		
+		#current-topic {
+			color: red;
+		}
+		
+		#current-page {
+		  background: #F6F6F6;
+		  cursor: default;
+		}
+		
+		.page-bar {
+			padding: 7px;
+		}
+		
+		.button-page {
+		  background: transparent;
+		  border: none;
+		  border-radius: 10px;
+		  cursor: pointer;	
+		  float: left;
+		  font-size: 14px;
+		  margin: 0 0 30px 0;
+		  padding: 5px;
+		  width: 32px;
+		}
+		
+		.button-page:hover{
+		  background: #e8e6e4;
+		}
+		
 		@media(max-width: 800px) {
 			.main {
 				grid-template-columns: none;
+				grid-template-rows: 1fr 3fr;
 			}
 			
 			h1 {
@@ -133,11 +190,26 @@
 			}
 			
 			nav {
-			display: grid;
-			grid-template-columns: none;
-			grid-template-rows: 1fr 1fr;
+				display: grid;
+				grid-template-columns: none;
+				grid-template-rows: 1fr 1fr;
+		    }
+			
+			.topic {
+				display: grid;
+				grid-template-rows: 0.2fr 1fr 0.2fr;
+			}
+			
+			.topic-list ol {
+				column-count: 3;
+			}
+			
+			.page-bar {
+				padding: 7px;
+				min-height: 30px;
+				margin: auto;
+			}
 		}
-		  }
 	</style>
     <title>Lorem ipsum dolor sit amet</title>
 	<script>
@@ -164,14 +236,19 @@
 	});
 	</script>
 	  <script>
-		var hash_title = location.hash.replace("!", "").replace("#", "");
-		if(hash_title){
-			fetch('/get-id/' + hash_title).then(function(response){
-				response.json().then(function(data){
-					viewContent(data[0]['id']);
+		window.addEventListener("load", function(){
+			var hash_title = location.hash.replace("!", "").replace("#", "");
+			viewPage(1);
+			if(hash_title){
+				fetch('/get-id/' + hash_title).then(function(response){
+					response.json().then(function(data){
+						viewContent(data[0]['id']);
+					})
 				})
-			})
-		}
+			} else {
+				viewPage(1);
+			}
+		});
 		var viewContent = function(id){
 			fetch('/content/' + String(id)).then(function(response){
 				response.json().then(function(data){
@@ -195,7 +272,12 @@
 					var topicList = `<ol start=${(data['pageInfo']['curPage']-1)*15+1}>`;
 					for (var i in data['topicList']){
 						var topic = data['topicList'][i];
-						topicList +=  `<li><a href="#!${topic.title}" onclick="viewContent(${topic.id});">${topic.title}</a></li>`;
+						if (Number(i) === 0){
+							topicList +=  `<li><span id="current-topic">${topic.title}</span></li>`; //{topic.title}
+							viewContent(topic.id);
+						} else {
+							topicList +=  `<li><a href="#!${topic.title}" onclick="viewContent(${topic.id});">${topic.title}</a></li>`;
+						}
 					}
 					topicList += '</ol>';
 					
@@ -213,7 +295,7 @@
 						j++;
 					}
 					if (data['pageInfo']['curBlock'] < data['pageInfo']['totalBlock']){  // 마지막 페이지가 아니면
-						pageBar += `<button class="button-page" onclick="viewPage(${j+1})">></button>`;
+						pageBar += `<button class="button-page" onclick="viewPage(${j})">></button>`;
 					}
 					pageBar += '</div>'
 					document.querySelector('.topic-list').innerHTML = topicList;
@@ -223,45 +305,14 @@
 		}
 		
 		window.addEventListener("load", function(){
-			fetch('/page/11/title-desc').then(function(response){
-				response.json().then(function(data){
-					var pageBar = '<div class="page-bar">';
-					var topicList = `<ol start=${(data['pageInfo']['curPage']-1)*15+1}>`;
-					for (var i in data['topicList']){
-						var topic = data['topicList'][i];
-						topicList +=  `<li><a href="#!${topic.title}" onclick="viewContent(${topic.id});">${topic.title}</a></li>`;
-					}
-					topicList += '</ol>';
-					
-					var j = data['pageInfo']['blockFirst'];
-					if (data['pageInfo']['curBlock'] > 1){  // 첫 페이지가 아니면
-						pageBar += `<button class="button-page" onclick="viewPage(${j-1})"><</button>`;
-					}
-					while (j<data['pageInfo']['blockLast']+1){
-						if (j === data['pageInfo']['curPage']){  // 현재 페이지인 경우
-							pageBar += `<button class="button-page" onclick="viewPage(${j})" id="current-page">${j}</button>`;
-						} else {
-							pageBar += `<button class="button-page" onclick="viewPage(${j})">${j}</button>`;
-						}
-
-						j++;
-					}
-					if (data['pageInfo']['curBlock'] < data['pageInfo']['totalBlock']){  // 마지막 페이지가 아니면
-						pageBar += `<button class="button-page" onclick="viewPage(${j+1})">></button>`;
-					}
-					pageBar += '</div>'
-					document.querySelector('.topic-list').innerHTML = topicList;
-					document.querySelector('.page-bar').innerHTML = pageBar;
-				});
-			});
+			viewPage(1);
 		});
 	  </script>
   </head>
   <body>
     <div class="banner">
       <h1 onclick="/">Lorem ipsum dolor sit amet</h1>
-    </div>
-	<nav class="edit">
+	  <nav class="edit">
 		<ul>
 		  <li>AuthorTable</li>
 		  <li>Create</li>
@@ -272,23 +323,24 @@
 		<form action="search" method="get">
 	<input type="text" class="search search-bar" name="query" placeholder="검색어를 입력하세요." value="">
 	<input type="submit" class="search search-button" value="Search" >
-	    </form>	
+		</form>	
 		</div>
-		</nav>
+	  </nav>
+    </div>
 	<div class="main">
-    <div class="left">
-      <div class="topic">
-		  <form action="" method="get" class="sort-by">
-		  </form>
-		  <div class="topic-list">
+		<div class="left">
+		  <div class="topic">
+			  <form action="" method="get" class="sort-by">
+			  </form>
+			  <div class="topic-list">
+			  </div>
+			  <div class="page-bar">
+			  </div>
 		  </div>
-		  <div class="page-bar">
-		  </div>
-      </div>
-    </div>
-    <div class="right">	
-		<article>asfdfasd</article>
-    </div>
+		</div>
+		<div class="right">	
+			<article>asfdfasd</article>
+		</div>
 	 </div>
   </body>
 </html>
