@@ -51,6 +51,27 @@
 		padding: 10px;
 	}
 	</style>
+	<script>
+	var hash_title = location.hash.replace("!", "").replace("#", "");
+	if(hash_title){
+		fetch('/get-id/' + hash_title).then(function(response){
+			response.json().then(function(data){
+				viewContent(data[0]['id']);
+			})
+		})
+	};
+
+	var viewContent = function(id){
+		fetch('/content/' + String(id)).then(function(response){
+			response.json().then(function(data){
+				var content = `<h2>${data[0]['title']}</h2>
+					<p>${data[0]['description']}</p>`;
+				document.querySelector('.right').innerHTML = content;
+			});
+		});
+	};
+	</script>
+	  
   </head>
   <body>
     <div class="banner">
