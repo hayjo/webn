@@ -21,7 +21,7 @@
 	.left {
 		background-color: #D1CCD9;
 		display: grid;
-		margin-top: 140px;
+		margin-top: 160px;
 		padding: 20px;
 	}
 	.main {
@@ -33,7 +33,7 @@
 	}
 	.right {
 		background-color: gray;
-		margin-top: 140px;
+		margin-top: 160px;
 		padding: 20px;
 	}
 	.edit-menu ul {
@@ -43,12 +43,45 @@
 		overflow: hidden;
 	}
 	.edit-menu li {
+		font-size: 17px;
 		float: left;
-		padding: 3px 15px 3px 10px;
+		padding: 20px;
+	}
+	.edit-menu li:hover {
+		background-color: #111111;
+	}
+	.sort-button {
+		background: #8E82A2;
+		border: none;
+		border-radius: 4px;
+		color: whitesmoke;
+		cursor: pointer;	
+		font-size: 14px;
+		padding: .6em;
+		margin: 0;
+	}
+	.sort-bar {
+		text-align: left;
+	}
+	.sort-bar select {
+		font-size: 13px;
+		padding: .6em;
+		margin: 0;
+		border: 1px solid #aaa;
+		border-radius: .5em;
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		appearance: none;
+		background-color: #fff;
+		background-repeat: no-repeat, repeat;
+	}
+	.sort-button:hover {
+		background-color: #A59BB5;
 	}
 	h1 {
 		font-size: 40px;
 		text-align: center;
+		padding: 5px;
 	}
 	html, body {
 		height: 100%;
@@ -61,16 +94,14 @@
 		display: grid;
 		grid-template-columns: 1.5fr 1fr;
 		margin: 0;
-		padding: 10px;
+		height: 60px;
 	}
 	.search-form {
-		padding-right: 20px;
 		text-align: right;
+		margin: auto 10px auto auto;
 	}
-
 	.search-bar {
 		font-size: 14px;
-		margin: 5px;
 		padding: 3px;
 	}
 	.search-button {
@@ -142,7 +173,15 @@
     </div>
     <div class="main">
       <div class="left">
-        <div class="sort-bar">sort-bar</div>
+        <div class="sort-bar">
+		  <select name="sortBy">
+			  <option value="title-asc">타이틀 오름차순</option>
+			  <option value="title-disc">타이틀 내림차순</option>
+			  <option value="date-asc">일자 오름차순</option>
+			  <option value="date-disc">일자 내림차순</option>
+			  <input type="submit" value="Sort" class="sort-button">
+		  </select>
+		</div>
         <div class="topic-list">topic-list</div>
         <div class="page-bar">page-bar</div>
       </div>
