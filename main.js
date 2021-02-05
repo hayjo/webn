@@ -25,14 +25,14 @@ var app = http.createServer(function(request, response){
 	url_parsed = pathname.split('/');
 
 	
-	if (['topic'].includes(url_parsed[1])){
+	if (url_parsed[1] === 'topic'){
 			var page = Number(url_parsed[3]);
 		if (['title-asc', 'title-desc', 'created-asc', 'created-desc'].includes(url_parsed[2])){
 			if (Number.isInteger(page)){
 			var list = `
 				<div class="list">
 				  <ol>\n`;
-			  db.query(`SELECT id, title FROM topic LIMIT ? OFFSET ?`, [15, Number(url_parsed[3])*15], function(err, data){
+			  db.query(`SELECT id, title FROM topic LIMIT ? OFFSET ?`, [15, page*15], function(err, data){
 				for(var i=1; i<data.length; i++){
 				  list += `			      <li><a href="/?id=${data[i].id}">${data[i].title}</a></li>\n`;
 				};
@@ -45,6 +45,23 @@ var app = http.createServer(function(request, response){
 			  return 0;
 			  });
 			}
+		}
+	} else if (url_parsed[1] === 'topic-temp'){
+		var sortBy = url_parsed[2];
+		var start = Number(url_parsed[3]);
+		if (['title-asc', 'title-desc', 'created-asc', 'created-desc'].includes(sortBy)){
+			var sortBy = 'ORDER BY ' + sortBy.replace("-", " ");
+			var query = `SELECT JSON_ARRAYAGG(JSON_OBJECT('id', id, 'title', title)) as topic FROM (SELECT id, title FROM test ${sortBy} LIMIT ? OFFSET ?)sub`;
+			if (Number.isInteger(start) && start >= 0){
+			  db.query(query, [15, start], function(err, data){
+				  if (err) {throw err};
+				  response.setHeader('Content-Type', 'application/json');
+				  response.end(data[0]['topic']);
+			  });
+			}
+		} else {
+			response.writeHead(404);
+			response.end('Data Not Found');
 		}
 		
 	} else if (url_parsed[1] === 'page'){
@@ -78,7 +95,7 @@ var app = http.createServer(function(request, response){
 		if ((Number.isInteger(id)) && sortByBool) {
 			var sortBy = ' ORDER BY ' + url_parsed[3].replace("-", " ");
 			var query1 = `SET @rank=0`;
-			var query2 = `SELECT rank, id FROM (SELECT @rank:=@rank+1 AS rank, id, title FROM test ` + sortBy + `)sub WHERE id = ?;`
+			var query2 = `SELECT rank, id FROM (SELECT @rank:=@rank+1 AS rank, id, title FROM test ${sortBy})sub WHERE id = ?;`
 			db.query(query1, function(err1, result1){
 				if (err1) { throw err1 };
 				db.query(query2, id, function(err2, result2){

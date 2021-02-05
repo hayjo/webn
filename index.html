@@ -33,6 +33,7 @@
 	}
 	.right {
 		background-color: gray;
+		font-size: 20px;
 		margin-top: 160px;
 		padding: 20px;
 	}
@@ -43,7 +44,7 @@
 		overflow: hidden;
 	}
 	.edit-menu li {
-		font-size: 17px;
+		font-size: 18px;
 		float: left;
 		padding: 20px;
 	}
@@ -56,7 +57,7 @@
 		border-radius: 4px;
 		color: whitesmoke;
 		cursor: pointer;	
-		font-size: 14px;
+		font-size: 17px;
 		padding: .6em;
 		margin: 0;
 	}
@@ -64,7 +65,7 @@
 		text-align: left;
 	}
 	.sort-bar select {
-		font-size: 13px;
+		font-size: 16px;
 		padding: .6em;
 		margin: 0;
 		border: 1px solid #aaa;
@@ -148,6 +149,27 @@
 			});
 		});
 	};
+	
+	var viewTopic = function(){
+		var start = 0;
+		try {
+			var sortBy = document.getElementById("sort").value;
+		} catch {
+			sortBy = 'title-asc';
+		}
+		fetch('/topic-temp/' + sortBy + '/' + String(start)).then(function(response){
+			response.json().then(function(data){
+				var content = `<ul>`;
+				for (var j in data){
+					var topic = data[j];
+					content += `<li><a onclick="viewContent(${topic['id']})">${topic['title']}</a></li>`;
+				}
+				content += `</ul>`;
+				document.querySelector('.topic-list').innerHTML = content;
+			});
+		});
+	}
+	window.addEventListener("load", viewTopic());
 	</script>
 	  
   </head>
@@ -174,11 +196,11 @@
     <div class="main">
       <div class="left">
         <div class="sort-bar">
-		  <select name="sortBy">
+		  <select id="sort" onchange="viewTopic(this.value);">
 			  <option value="title-asc">타이틀 오름차순</option>
-			  <option value="title-disc">타이틀 내림차순</option>
+			  <option value="title-desc">타이틀 내림차순</option>
 			  <option value="date-asc">일자 오름차순</option>
-			  <option value="date-disc">일자 내림차순</option>
+			  <option value="date-desc">일자 내림차순</option>
 			  <input type="submit" value="Sort" class="sort-button">
 		  </select>
 		</div>
