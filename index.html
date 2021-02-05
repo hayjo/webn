@@ -12,6 +12,9 @@
 		position: absolute;
 		width: 100%;
 	}
+	.content-edit {
+    	display: none;
+    }
 	.edit div {
 		color: white;
 	}
@@ -32,6 +35,16 @@
 		background-color: gray;
 		margin-top: 140px;
 		padding: 20px;
+	}
+	.edit-menu ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+	.edit-menu li {
+		float: left;
+		padding: 3px 15px 3px 10px;
 	}
 	h1 {
 		font-size: 40px;
@@ -60,6 +73,17 @@
 			})
 		})
 	};
+		
+	var onEdit = function(bool){
+		var content_edit = document.querySelectorAll('.content-edit');
+		var change = 'inline';
+		if(bool){
+			change = 'none';
+		}
+		for (var i=0;i<content_edit.length;i++){
+			content_edit[i].style.display = change;
+		};
+	};
 
 	var viewContent = function(id){
 		fetch('/content/' + String(id)).then(function(response){
@@ -67,6 +91,7 @@
 				var content = `<h2>${data[0]['title']}</h2>
 					<p>${data[0]['description']}</p>`;
 				document.querySelector('.right').innerHTML = content;
+				onEdit();
 			});
 		});
 	};
@@ -77,7 +102,14 @@
     <div class="banner">
       <h1>Lorem ipsum dolor sit amet</h1>
       <nav class="edit">
-        <div class="edit-menu">edit-menu</div>
+        <div class="edit-menu">
+		  <ul>
+			  <li>AuthorTable</li>
+			  <li>Create</li>
+			  <li class="content-edit">Update</li>
+			  <li class="content-edit">Delete</li>
+		  </ul>
+		</div>
         <div class="search-form">search-form</div>
       </nav>
     </div>
