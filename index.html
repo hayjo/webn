@@ -63,6 +63,28 @@
 		margin: 0;
 		padding: 10px;
 	}
+	.search-form {
+		padding-right: 20px;
+		text-align: right;
+	}
+
+	.search-bar {
+		font-size: 14px;
+		margin: 5px;
+		padding: 3px;
+	}
+	.search-button {
+		background: #8E82A2;
+		border: none;
+		border-radius: 3px;
+		color: whitesmoke;
+		cursor: pointer;	
+		font-size: 16px;
+		padding: 4px 6px 6px 6px;
+	}
+	.search-button:hover {
+		background-color: #A59BB5;
+	}
 	</style>
 	<script>
 	var hash_title = location.hash.replace("!", "").replace("#", "");
@@ -110,7 +132,12 @@
 			  <li class="content-edit">Delete</li>
 		  </ul>
 		</div>
-        <div class="search-form">search-form</div>
+        <div class="search-form">
+			<form action="search" method="get">
+				<input type="text" class="search search-bar" name="query" placeholder="검색어를 입력하세요." value="">
+				<input type="submit" class="search search-button" value="Search">
+			</form>	
+		  </div>
       </nav>
     </div>
     <div class="main">
