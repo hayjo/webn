@@ -4,19 +4,6 @@ var path = require('path');
 var fs = require('fs');
 var db = require('./db');
 
-var app = http.createServer(function(request, response){
-    var _url = request.url;
-    var pathname = url.parse(_url, true).pathname;
-	var dir = path.parse(pathname).dir;
-	var basePath = "/" + path.parse(pathname).base;
-	
-	response.writeHead(200);
-	response.end(fs.readFileSync(__dirname + '/index.html'));
-
-});
-app.listen(3000);
-
-
 
 var app = http.createServer(function(request, response){
     var _url = request.url;
@@ -65,14 +52,15 @@ var app = http.createServer(function(request, response){
 		}
 		
 	} else if (url_parsed[1] === 'page'){
-		var pageNum = Number(url_parsed[2]);
+		var sortBy = url_parsed[2];
+		var pageNum = Number(url_parsed[3]);
 		var offSet = pageNum - 1;  // MySQL은 인덱스가 0부터 시작이라서
 		if (!Number.isInteger(offSet) || offSet < 0) {   // 페이지 번호가 자연수가 아니면
 			response.writeHead(404);
 			response.end('Data Not Found');
 		} else {
-			if (['title-asc', 'title-desc', 'created-asc', 'created-desc'].includes(url_parsed[3])){
-				var sortBy = ' ORDER BY ' + url_parsed[3].replace("-", " ");
+			if (['title-asc', 'title-desc', 'created-asc', 'created-desc'].includes(sortBy)){
+				var sortBy = ' ORDER BY ' + sortBy.replace("-", " ");
 				getTopicList(sortBy, offSet, function(topicList){
 					getPageInfo(pageNum, function(pageInfo){
 						var result = {

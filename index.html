@@ -123,6 +123,46 @@
 	    cursor: default;
 		text-decoration: none;
 	}
+	.topic-list ol {
+	  width: 90%;
+	  padding: 0 0 0 40px;
+	}
+
+	.topic-list li {
+	  color: inherit;
+	  padding: 3px;
+	}
+
+	.topic-list a:hover {
+	  background-color: inherit;
+	  color: red;
+	}
+
+	#current-page {
+	  background: #F6F6F6;
+	  cursor: default;
+	}
+
+	.page-bar {
+	  padding: 7px;
+	  min-height: 150px;
+	}
+
+	.button-page {
+	  background: transparent;
+	  border: none;
+	  border-radius: 10px;
+	  cursor: pointer;	
+	  float: left;
+	  font-size: 14px;
+	  margin: 0 0 30px 0;
+	  padding: 5px;
+	  width: 32px;
+	}
+
+	.button-page:hover{
+	  background: #e8e6e4;
+	}
 	</style>
 	<script>
 	var hash_title = location.hash.replace("!", "").replace("#", "");
@@ -169,27 +209,59 @@
 		} 
 	};
 		
-	var viewTopic = function(){
-		var start = 0;
+	var viewTopicNBar = function(pageNum){
+	    if (pageNum === undefined){
+			pageNum = 1;
+		};
 		try {
-			var sortBy = document.getElementById("sort").value;
+		    var sortBy = document.getElementById("sort").value;
 		} catch {
-			sortBy = 'title-asc';
-		}
-		fetch('/topic-temp/' + sortBy + '/' + String(start)).then(function(response){
+		    var sortBy = 'title-asc';
+		};
+		fetch('/page/' + sortBy + '/' + String(pageNum)).then(function(response){
 			response.json().then(function(data){
-				var content = `<ul>`;
-				for (var j in data){
-					var topic = data[j];
-					content += `<li><a class="topic-item" href="#!${topic['title']}" onclick="viewContent(${topic['id']});">${topic['title']}</a></li>`;
-				}
-				content += `</ul>`;
-				document.querySelector('.topic-list').innerHTML = content;
+				var startTopic = (data['pageInfo']['curPage']-1)*15+1;
+				var topicList = viewTopic(data['topicList'], startTopic);
+				var pageInfo = viewPageBar(data['pageInfo']);
+				document.querySelector('.topic-list').innerHTML = topicList;
+				document.querySelector('.page-bar').innerHTML = pageInfo;
 				activeRed();
 			});
 		});
 	}
-	window.addEventListener("load", viewTopic());
+
+	var viewPageBar = function(pageData){
+		var pageBar = '<div class="page-bar">';
+		var pageCount = pageData['blockFirst'];
+		if (pageData['curBlock'] > 1){  // 첫 페이지가 아니면
+			pageBar += `<button class="button-page" onclick="viewTopicNBar(${pageCount-1})"><</button>`;
+		}
+		while (pageCount < pageData['blockLast']+1){
+			if (pageCount === pageData['curPage']){  // 현재 페이지인 경우
+				pageBar += `<button class="button-page" onclick="viewTopicNBar(${pageCount})" id="current-page">${pageCount}</button>`;
+			} else {
+				pageBar += `<button class="button-page" onclick="viewTopicNBar(${pageCount})">${pageCount}</button>`;
+			}
+			pageCount++;
+		}
+		if (pageData['curBlock'] < pageData['totalBlock']){  // 마지막 페이지가 아니면
+			pageBar += `<button class="button-page" onclick="viewTopicNBar(${pageCount+1})">></button>`;
+		}
+		pageBar += '</div>'
+		return pageBar;
+	};
+
+	var viewTopic = function(topicData, startTopic){
+		var content = `<ol start=${startTopic}>`;
+		for (var j in topicData){
+			var topic = topicData[j];
+			content += `<li><a class="topic-item" href="#!${topic['title']}" onclick="viewContent(${topic['id']});">${topic['title']}</a></li>`;
+		}
+		content += `</ol>`;
+		return content;
+	};
+		
+	window.addEventListener("load", viewTopicNBar());
 	</script>
 	  
   </head>
@@ -216,11 +288,11 @@
     <div class="main">
       <div class="left">
         <div class="sort-bar">
-		  <select id="sort" onchange="viewTopic(this.value);">
+		  <select id="sort" onchange="viewTopicNBar();">
 			  <option value="title-asc">타이틀 오름차순</option>
 			  <option value="title-desc">타이틀 내림차순</option>
-			  <option value="date-asc">일자 오름차순</option>
-			  <option value="date-desc">일자 내림차순</option>
+			  <option value="created-asc">일자 오름차순</option>
+			  <option value="created-desc">일자 내림차순</option>
 			  <input type="submit" value="Sort" class="sort-button">
 		  </select>
 		</div>
