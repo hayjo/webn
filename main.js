@@ -5,6 +5,13 @@ var fs = require('fs');
 var db = require('./db');
 
 
+//////
+var pagePerBlock = 10;
+var topicPerPage = 15;
+/////
+
+
+
 var app = http.createServer(function(request, response){
     var _url = request.url;
 	var pathname = url.parse(_url, true).pathname;
@@ -78,10 +85,11 @@ var app = http.createServer(function(request, response){
 		}
 		
 	} else if (url_parsed[1] === 'rank') {
-		var id = Number(url_parsed[2]);
-		var sortByBool = ['title-asc', 'title-desc', 'created-asc', 'created-desc'].includes(url_parsed[3]);
+		var sortBy = url_parsed[2];
+		var id = Number(url_parsed[3]);
+		var sortByBool = ['title-asc', 'title-desc', 'created-asc', 'created-desc'].includes(sortBy);
 		if ((Number.isInteger(id)) && sortByBool) {
-			var sortBy = ' ORDER BY ' + url_parsed[3].replace("-", " ");
+			var sortBy = ' ORDER BY ' + sortBy.replace("-", " ");
 			var query1 = `SET @rank=0`;
 			var query2 = `SELECT rank, id FROM (SELECT @rank:=@rank+1 AS rank, id, title FROM test ${sortBy})sub WHERE id = ?;`
 			db.query(query1, function(err1, result1){
@@ -93,6 +101,7 @@ var app = http.createServer(function(request, response){
 						response.end();
 				    } else {
 						result = result2[0];
+						result['curPage'] = Math.ceil(result['rank']/topicPerPage);
 						response.writeHead(200, { 'Content-Type': 'application/json' });
 						response.end(JSON.stringify(result));
 					}
@@ -135,16 +144,13 @@ var app = http.createServer(function(request, response){
 			});
 
 	} else {
-	response.writeHead(200);
-	response.end(fs.readFileSync(__dirname + '/index.html'));
+		response.writeHead(200);
+		response.end(fs.readFileSync(__dirname + '/index.html'));
 	}
 
 });
 app.listen(8393);
 
-
-var pagePerBlock = 10;
-var topicPerPage = 15;
 
 function getTopicList(sortBy, offSet, callback){
 	var query = `SELECT JSON_ARRAYAGG(JSON_OBJECT('id', id, 'title', title)) as topicList FROM (SELECT id, title FROM test ${sortBy} LIMIT ? OFFSET ?)sub`  // 토픽목록 구하는 쿼리

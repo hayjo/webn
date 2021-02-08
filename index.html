@@ -117,7 +117,7 @@
 	.search-button:hover {
 		background-color: #A59BB5;
 	}
-	.active {
+	#active {
 		color: red;
 		pointer-events: none;
 	    cursor: default;
@@ -200,16 +200,45 @@
 		var topics = document.querySelectorAll('.topic-item');
 		for (var i = 0; i < topics.length; i++) {
 		  topics[i].addEventListener("click", function() {
-		    var current = document.getElementsByClassName("active");
-			if (current.length !== 0) {
-				current[0].className = current[0].className.replace(" active", "");
+			var current = document.querySelector('#active');
+			if (current !== null) {
+				current.removeAttribute('id');
 			}
-			this.className += " active";
+			this.id = "active";
 		  });
 		} 
 	};
 		
-	var viewTopicNBar = function(pageNum){
+	var findDataInNewSort = function(){
+		var current = document.getElementById("active");
+		console.log(current);
+		if (current === null){
+			current = 0;
+		} else {
+			current = current.innerHTML;
+		}
+		try {
+		    var sortBy = document.getElementById("sort").value;
+		} catch {
+		    var sortBy = 'title-asc';
+		};
+		fetch('/get-id/' + current).then(function(response1){
+			response1.json().then(function(data1){
+				var id = data1[0]['id'];
+				fetch('/rank/' + sortBy + '/' + String(id)).then(function(response2){
+					response2.json().then(function(data2){
+						var curPage = data2['curPage'];
+						viewTopicNBar(curPage, id);
+					});
+				});
+			});
+		})
+	}
+		
+	var viewTopicNBar = function(pageNum, id){
+		if (id === undefined){
+			id = 0;
+		}
 	    if (pageNum === undefined){
 			pageNum = 1;
 		};
@@ -221,7 +250,7 @@
 		fetch('/page/' + sortBy + '/' + String(pageNum)).then(function(response){
 			response.json().then(function(data){
 				var startTopic = (data['pageInfo']['curPage']-1)*15+1;
-				var topicList = viewTopic(data['topicList'], startTopic);
+				var topicList = viewTopic(data['topicList'], startTopic, id);
 				var pageInfo = viewPageBar(data['pageInfo']);
 				document.querySelector('.topic-list').innerHTML = topicList;
 				document.querySelector('.page-bar').innerHTML = pageInfo;
@@ -251,14 +280,16 @@
 		return pageBar;
 	};
 
-	var viewTopic = function(topicData, startTopic){
+	var viewTopic = function(topicData, startTopic, id){
 		var content = `<ol start=${startTopic}>`;
 		for (var j in topicData){
 			var topic = topicData[j];
-			if (Number(j) === 0){
-				content += `<li><a class="topic-item active" href="#!${topic['title']}" onclick="viewContent(${topic['id']});">${topic['title']}</a></li>`;
-				viewContent(topic.id);
-				window.location.hash = "!" + topic.title;
+			if ((id === 0 && Number(j) === 0) || (topic['id'] === id)){
+				content += `<li><a id="active" class="topic-item" href="#!${topic['title']}" onclick="viewContent(${topic['id']});">${topic['title']}</a></li>`;
+				if (id === 0){
+					viewContent(topic.id);
+					window.location.hash = "!" + topic.title;
+				}
 			} else {
 				content += `<li><a class="topic-item" href="#!${topic['title']}" onclick="viewContent(${topic['id']});">${topic['title']}</a></li>`;
 			}
@@ -294,7 +325,7 @@
     <div class="main">
       <div class="left">
         <div class="sort-bar">
-		  <select id="sort" onchange="viewTopicNBar();">
+		  <select id="sort" onchange="findDataInNewSort();">
 			  <option value="title-asc">타이틀 오름차순</option>
 			  <option value="title-desc">타이틀 내림차순</option>
 			  <option value="created-asc">일자 오름차순</option>
