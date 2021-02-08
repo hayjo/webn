@@ -255,7 +255,13 @@
 		var content = `<ol start=${startTopic}>`;
 		for (var j in topicData){
 			var topic = topicData[j];
-			content += `<li><a class="topic-item" href="#!${topic['title']}" onclick="viewContent(${topic['id']});">${topic['title']}</a></li>`;
+			if (Number(j) === 0){
+				content += `<li><a class="topic-item active" href="#!${topic['title']}" onclick="viewContent(${topic['id']});">${topic['title']}</a></li>`;
+				viewContent(topic.id);
+				window.location.hash = "!" + topic.title;
+			} else {
+				content += `<li><a class="topic-item" href="#!${topic['title']}" onclick="viewContent(${topic['id']});">${topic['title']}</a></li>`;
+			}
 		}
 		content += `</ol>`;
 		return content;
