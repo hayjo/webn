@@ -160,6 +160,54 @@
 		font-size: 100px;
 		text-align: center;
 	}
+	.author {
+		color: #C7C7C7;
+		text-align: right;
+	}
+	.name {
+		color: #D0D1CD;
+	}
+	#author-table {
+		border: none;
+		border-collapse: collapse;
+		padding: 10px;
+		margin: 10px;
+	}
+	.table-idx {
+		background-color: gray;
+		border-bottom: gray;
+		color: #D7D7D7;
+		padding: 1px;
+		text-align: center;
+		min-width: 15px;
+		max-width: 18px;
+	}
+	#author-table td {
+		border-bottom: 1px solid #ddd;
+		color: whitesmoke;
+		padding: 5px 6px 5px 10px;
+		border-left: none;
+		border-right: none;
+		width: 100px;
+	}
+
+	#author-table th {
+		border-bottom: 1px solid #ddd;
+		padding: 5px;
+		background-color: gray;
+		color: #D7D7D7;
+		min-width: 60px;
+	}
+	.button-edit {
+		margin: 0 15px;
+		background: #666666;
+		border: none;
+		border-radius: 3px;
+		color: whitesmoke;
+		cursor: pointer;	
+		font-size: 16px;
+		padding: 4px 6px 6px 6px;
+	}
 	</style>
 	<script>
 	var hash_title = location.hash.replace("!", "").replace("#", "");
@@ -186,7 +234,11 @@
 		fetch('/content/' + String(id)).then(function(response){
 			response.json().then(function(data){
 				var content = `<h2>${data[0]['title']}</h2>
-					<p>${data[0]['description']}</p>`;
+					<p>${data[0]['description']}</p>
+					<p class="author">Edited By 
+						<span class="name">${data[0]['authorName']}</span>
+						<span class="profile">[${data[0]['authorProfile']}]</span>
+					</p>`;
 				document.querySelector('.right').innerHTML = content;
 				onEdit();
 			});
@@ -307,6 +359,76 @@
 			current.removeAttribute('id');
 		};
 	};
+
+	var authorPage = function(more){
+		if (more === undefined){
+			more = 15;
+			var start = 0;
+		} else {
+			var start = document.getElementById("last-author").innerHTML;
+		}
+		fetch(`author/view/${start}/${more}`).then(function(response){
+			response.json().then(function(data){
+				if (start === 0){
+					var table = document.createElement('table');
+					table.setAttribute('id', 'author-table');
+					const idx = document.createElement('th');
+					idx.setAttribute('class', 'table-idx');
+					idx.innerHTML = '#';
+					table.appendChild(idx);
+					const thlist = ['Author', 'Profile', 'Update', 'Delete']
+					for (var i in thlist){
+						const cell = document.createElement('th');
+						cell.innerHTML = thlist[i];
+						table.appendChild(cell);
+					}
+				} else {
+					var table = document.getElementById('author-table');
+				}
+				for (var i in data){
+					const rowsFragment = document.createDocumentFragment();
+					const row = document.createElement("tr");
+					const cell1 = document.createElement("td");
+					cell1.setAttribute('class', 'table-idx');
+					if (data[i] === data[data.length-1]){
+						cell1.setAttribute('id', 'last-author')
+					};
+					cell1.innerHTML = ++start;
+					const cell2 = document.createElement("td");
+					cell2.innerHTML = data[i]['name'];
+					const cell3 = document.createElement("td");
+					cell3.innerHTML = data[i]['profile'];
+					const cell4 = document.createElement("td");
+					const button1 = document.createElement("button");
+					button1.setAttribute('class', 'button-edit');
+					button1.innerHTML = 'Update';
+					cell4.appendChild(button1);
+					const cell5 = document.createElement("td");
+					const button2 = document.createElement("button");
+					button2.setAttribute('class', 'button-edit');
+					button2.innerHTML = 'Delete';
+					cell5.appendChild(button2);
+					row.appendChild(cell1);
+					row.appendChild(cell2);
+					row.appendChild(cell3);
+					row.appendChild(cell4);
+					row.appendChild(cell5);
+					rowsFragment.appendChild(row);
+					table.appendChild(rowsFragment);
+				};
+
+				document.querySelector('.right').innerHTML = ``;
+				document.querySelector('.right').appendChild(table);
+			});
+		});
+	};
+
+	window.onscroll = function() {
+		if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+			authorPage(10);
+		}
+	};
+
 	</script>
 	  
   </head>
@@ -316,7 +438,7 @@
       <nav class="edit">
         <div class="edit-menu">
 		  <ul>
-			  <li>AuthorTable</li>
+			  <li onclick="authorPage();">AuthorTable</li>
 			  <li>Create</li>
 			  <li class="content-edit">Update</li>
 			  <li class="content-edit">Delete</li>

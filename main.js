@@ -83,7 +83,22 @@ var app = http.createServer(function(request, response){
 				response.end('Data Not Found');
 			}
 		}
-		
+
+	} else if (url_parsed[1] === 'author' && url_parsed[2] === 'view'){
+		var start = Number(url_parsed[3]);
+		var more = Number(url_parsed[4]);
+		if (!Number.isInteger(start) || !Number.isInteger(more)) {
+			response.writeHead(404);
+			response.end('Data Not Found');
+		} else {
+			var query = `SELECT JSON_ARRAYAGG(JSON_OBJECT('name', name, 'profile', profile)) as 'result' FROM (SELECT name, profile FROM authorTest LIMIT ? OFFSET ?)sub`;
+			db.query(query, [more, start], function(err, data){
+				if (err) { throw err };
+				response.writeHead(200, { 'Content-Type': 'application/json' });
+				response.end(data[0]['result']);
+			})
+		}
+
 	} else if (url_parsed[1] === 'rank') {
 		var sortBy = url_parsed[2];
 		var id = Number(url_parsed[3]);
@@ -115,20 +130,23 @@ var app = http.createServer(function(request, response){
 	} else if (url_parsed[1] === 'content') {
 		var id = Number(url_parsed[2]);
 		if (Number.isInteger(id)) {
-			var result = '';
-			db.query(`SELECT JSON_ARRAYAGG(JSON_OBJECT('title', title, 'description', description)) as '?' FROM test WHERE id = ?`, [id, id] , function(err, data){
+			var query = `SELECT JSON_ARRAYAGG(JSON_OBJECT('title', test.title, 'description', test.description, 'authorName', authorTest.name, 'authorProfile', authorTest.profile)) as '?' FROM test LEFT JOIN authorTest ON test.author_id=authorTest.id WHERE test.id=?`;
+			db.query(query, [id, id] , function(err, data){
 		      if (err) { throw err;};
 		      if (data.length === 0){         // 값이 나오지 않으면, 없는 id이면
 			    response.writeHead(404);
 			    response.end();
 		      } else {
-				result = data[0][id];
+				var result = data[0][id];
 				response.setHeader('Content-Type', 'application/json');
 				response.end(result);
 			  }
 			});
-		};
-		
+		} else {
+			response.writeHead(404);
+			response.end();
+		}
+
 	} else if (url_parsed[1] === 'get-id') {
 		var hash = url_parsed[2];
 			db.query(`SELECT JSON_ARRAYAGG(JSON_OBJECT('id', id, 'title', title)) as title FROM test WHERE title = ?`, [hash] , function(err, data){
