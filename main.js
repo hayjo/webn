@@ -102,6 +102,45 @@ var app = http.createServer(function(request, response){
 			})
 		}
 
+	} else if (url_parsed[1] === 'author' && url_parsed[2] === 'create'){
+		var body = '';
+		request.on('data', function(data){
+	        body += data;
+			try {
+				var dataJSON = JSON.parse(data);
+			} catch(err) {
+				console.error(err);
+			}
+			if (dataJSON['Author'] === '') {
+				var msg = { result: false,
+						    error: 'empty'
+						  }
+				response.writeHead(200, {'Content-Type': 'application/json'});
+				response.end(JSON.stringify(msg));
+			} else {
+				db.query('SELECT EXISTS(SELECT * FROM authorTest WHERE name = ?) AS dup;', dataJSON['Author'], function(err1, result1){
+					if (err1) {throw err1};
+					if (result1[0].dup === 0){  // 같은 이름이 없으면
+						var query = `INSERT INTO authorTest (name, profile) VALUES (?, ?)`;
+						db.query(query, [dataJSON['Author'], dataJSON['Profile']], function(err2, result2){
+							if (err2) {throw err2};
+							var msg = { result: true,
+										authorID: result2.insertId
+									  }
+							response.writeHead(200, {'Content-Type': 'application/json'});
+							response.end(JSON.stringify(msg));
+						})
+					} else {   // 있으면
+						var msg = { result: false,
+									error: 'duplicated'
+								  }
+						response.writeHead(200, {'Content-Type': 'application/json'});
+						response.end(JSON.stringify(msg));
+					}
+				});
+			}
+		});
+
 	} else if (url_parsed[1] === 'rank') {
 		var sortBy = url_parsed[2];
 		var id = Number(url_parsed[3]);

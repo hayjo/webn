@@ -233,8 +233,12 @@
 		padding: 0;
 		margin: 0;
 	}
-	.author-edit-area span {
+	.author-edit-area label {
 		padding: 0 10px 0 25px;
+	}
+	.insert-msg {
+		padding: 0 25px;
+		font-size: 15px;
 	}
 	</style>
 	<script>
@@ -376,7 +380,31 @@
 	};
 		
 	window.addEventListener("load", viewTopicNBar());
+
+	var isInsertDone = function (responseData){
+		var editErea = document.querySelector('.author-edit-area');
+		if (document.querySelector('.insert-msg') === null){
+			var msg = document.createElement("p");
+			msg.setAttribute('class', 'insert-msg');
+		} else {
+			var msg = document.querySelector('.insert-msg');
+		}
 		
+		const success = responseData.result;
+		if (success) {
+			const authorID = responseData.authorID;
+			msg.innerHTML = 'Thank You. Your data has been processed successfully.';
+		} else {
+			const error = responseData.error;
+			if (error === 'duplicated'){
+				msg.innerHTML = 'Your Author name already exists ... ';
+			} else if (error === 'empty'){
+				msg.innerHTML = 'Please type Author Name ... ';
+			}
+		}
+		editErea.appendChild(msg);
+	}
+
 	var home = function(){
 		var content = `<p class="home">Hello world!</p>`;
 		document.querySelector('.right').innerHTML = content;
@@ -388,8 +416,43 @@
 		};
 	};
 	
-	var createAuthor = function (){
+	/* REF https://dev.to/simonplend/how-to-use-fetch-to-post-form-data-as-json-to-your-api-2pih */
+	async function createAuthor(event){
+		event.preventDefault();  // 기본으로 실행되는 submit 액션 취소
+		const form = event.currentTarget;  // 현재 다루고 있는 핸들대상, 이벤트 핸들러 안에서만 사용 가능하다, 내 경우에는 폼 객체!
+		const url = form.action;   // 원래 폼이 보내는 URL
+		try {
+			const formData = new FormData(form);
+			const responseData = await postFormDataAsJson({url, formData});
+			isInsertDone(responseData);
+		} catch(err){
+			console.error(err);
+		}
+	}
+	
+	/* REF https://dev.to/simonplend/how-to-use-fetch-to-post-form-data-as-json-to-your-api-2pih */
 		
+	async function postFormDataAsJson({ url, formData }) {
+		const plainFormData = Object.fromEntries(formData.entries());
+		// .entries() Returns an iterator allowing to go through all key/value pairs contained in this object.
+		const formDataJsonString = JSON.stringify(plainFormData);
+		const fetchOptions = {
+			method: "POST",  // 디폴트 메소드가 GET이라서 꼭 POST라고 명시가 필요함
+	        headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json"
+        	},
+			body: formDataJsonString
+		};
+		
+		const response = await fetch(url, fetchOptions);
+		
+		if (!response.ok) {
+			const errorMessage = await response.text();
+			throw new Error(errorMessage);
+		}
+		
+		return response.json();
 	}
 	
 	var createForm = function (createButton){
@@ -404,11 +467,11 @@
 		var arr = ['Author', 'Profile']
 		for (var item in arr){
 			const li = document.createElement("li");
-			const label = document.createElement("span");
+			const label = document.createElement("label");
 			label.innerHTML = arr[item];
 			const input = document.createElement("input");
 			input.setAttribute("type", "text");
-			input.setAttribute("name", "name");
+			input.setAttribute("name", arr[item]);
 			li.appendChild(label);
 			li.appendChild(input);
 			list.appendChild(li);
@@ -421,6 +484,7 @@
 		form.appendChild(list);
 		form.appendChild(submit);
 		var div = document.querySelector('.author-edit-area');
+		form.addEventListener("submit", createAuthor);
 		div.appendChild(form);
 	}
 	
