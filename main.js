@@ -93,9 +93,12 @@ var app = http.createServer(function(request, response){
 		} else {
 			var query = `SELECT JSON_ARRAYAGG(JSON_OBJECT('name', name, 'profile', profile)) as 'result' FROM (SELECT name, profile FROM authorTest LIMIT ? OFFSET ?)sub`;
 			db.query(query, [more, start], function(err, data){
-				if (err) { throw err };
 				response.writeHead(200, { 'Content-Type': 'application/json' });
-				response.end(data[0]['result']);
+				var result = data[0]['result'];
+				if (result === null){
+					result = JSON.stringify([]);
+				}
+				response.end(result);
 			})
 		}
 

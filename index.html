@@ -208,6 +208,12 @@
 		font-size: 16px;
 		padding: 4px 6px 6px 6px;
 	}
+	.loaded {
+		text-align: center;
+		padding: 20px;
+		color: whitesmoke;
+		font-size: 15px;
+	}
 	</style>
 	<script>
 	var hash_title = location.hash.replace("!", "").replace("#", "");
@@ -361,71 +367,89 @@
 	};
 
 	var authorPage = function(more){
+		var loadDB = function (more, start) {
+			if (start === 0){
+				var table = document.createElement('table');
+				table.setAttribute('id', 'author-table');
+				var idx = document.createElement('th');
+				idx.setAttribute('class', 'table-idx');
+				idx.innerHTML = '#';
+				table.appendChild(idx);
+				var thlist = ['Author', 'Profile', 'Update', 'Delete']
+				for (var i in thlist){
+					var cell = document.createElement('th');
+					cell.innerHTML = thlist[i];
+					table.appendChild(cell);
+				}
+			} else {
+				var table = document.getElementById('author-table');
+			}
+			fetch(`author/view/${start}/${more}`).then(function(response){
+				response.json().then(function(data){
+					for (var i in data){
+						const rowsFragment = document.createDocumentFragment();
+						const row = document.createElement("tr");
+						const cell1 = document.createElement("td");
+						cell1.setAttribute('class', 'table-idx');
+						if (data[i] === data[data.length-1]){
+							cell1.setAttribute('id', 'last-author')
+						};
+						cell1.innerHTML = ++start;
+						const cell2 = document.createElement("td");
+						cell2.innerHTML = data[i]['name'];
+						const cell3 = document.createElement("td");
+						cell3.innerHTML = data[i]['profile'];
+						const cell4 = document.createElement("td");
+						const button1 = document.createElement("button");
+						button1.setAttribute('class', 'button-edit');
+						button1.innerHTML = 'Update';
+						cell4.appendChild(button1);
+						const cell5 = document.createElement("td");
+						const button2 = document.createElement("button");
+						button2.setAttribute('class', 'button-edit');
+						button2.innerHTML = 'Delete';
+						cell5.appendChild(button2);
+						row.appendChild(cell1);
+						row.appendChild(cell2);
+						row.appendChild(cell3);
+						row.appendChild(cell4);
+						row.appendChild(cell5);
+						rowsFragment.appendChild(row);
+						table.appendChild(rowsFragment);
+					};
+
+					document.querySelector('.right').innerHTML = ``;
+					document.querySelector('.right').appendChild(table);
+					
+					if (data.length < more){
+						const loaded = document.createElement("p");
+						loaded.innerHTML = '- All the data loaded -';
+						loaded.setAttribute('class', 'loaded');
+						document.querySelector('.right').appendChild(loaded);
+					};
+				});
+			});
+		}
 		if (more === undefined){
 			more = 15;
 			var start = 0;
+			return loadDB(more, start);
 		} else {
-			var start = document.getElementById("last-author").innerHTML;
-		}
-		fetch(`author/view/${start}/${more}`).then(function(response){
-			response.json().then(function(data){
-				if (start === 0){
-					var table = document.createElement('table');
-					table.setAttribute('id', 'author-table');
-					const idx = document.createElement('th');
-					idx.setAttribute('class', 'table-idx');
-					idx.innerHTML = '#';
-					table.appendChild(idx);
-					const thlist = ['Author', 'Profile', 'Update', 'Delete']
-					for (var i in thlist){
-						const cell = document.createElement('th');
-						cell.innerHTML = thlist[i];
-						table.appendChild(cell);
-					}
-				} else {
-					var table = document.getElementById('author-table');
-				}
-				for (var i in data){
-					const rowsFragment = document.createDocumentFragment();
-					const row = document.createElement("tr");
-					const cell1 = document.createElement("td");
-					cell1.setAttribute('class', 'table-idx');
-					if (data[i] === data[data.length-1]){
-						cell1.setAttribute('id', 'last-author')
-					};
-					cell1.innerHTML = ++start;
-					const cell2 = document.createElement("td");
-					cell2.innerHTML = data[i]['name'];
-					const cell3 = document.createElement("td");
-					cell3.innerHTML = data[i]['profile'];
-					const cell4 = document.createElement("td");
-					const button1 = document.createElement("button");
-					button1.setAttribute('class', 'button-edit');
-					button1.innerHTML = 'Update';
-					cell4.appendChild(button1);
-					const cell5 = document.createElement("td");
-					const button2 = document.createElement("button");
-					button2.setAttribute('class', 'button-edit');
-					button2.innerHTML = 'Delete';
-					cell5.appendChild(button2);
-					row.appendChild(cell1);
-					row.appendChild(cell2);
-					row.appendChild(cell3);
-					row.appendChild(cell4);
-					row.appendChild(cell5);
-					rowsFragment.appendChild(row);
-					table.appendChild(rowsFragment);
-				};
-
-				document.querySelector('.right').innerHTML = ``;
-				document.querySelector('.right').appendChild(table);
-			});
-		});
-	};
-
+			var lastAuthor = document.getElementById("last-author")
+			if (lastAuthor === null){
+				return false;
+			} else {
+				var start = lastAuthor.innerHTML;
+				lastAuthor.removeAttribute("id");
+				return loadDB(more, start);
+			}
+		};
+	}
 	window.onscroll = function() {
 		if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-			authorPage(10);
+			if (document.querySelector('.loaded') === null){
+				authorPage(10);
+			}
 		}
 	};
 
