@@ -214,6 +214,28 @@
 		color: whitesmoke;
 		font-size: 15px;
 	}
+	.author-edit-area {
+		min-height: 50px;
+		padding: 20px 0 0 0;
+		margin: 0;
+	}
+	.author-edit-area button, .author-edit-area .button-edit {
+		float: right;
+		margin: 0 5px 0 0;
+	}
+	.author-edit-area ul {
+		display: inline;
+		margin: 0;
+		padding: 0;
+	}
+	.author-edit-area ul li {
+		display: inline;
+		padding: 0;
+		margin: 0;
+	}
+	.author-edit-area span {
+		padding: 0 10px 0 25px;
+	}
 	</style>
 	<script>
 	var hash_title = location.hash.replace("!", "").replace("#", "");
@@ -365,22 +387,73 @@
 			current.removeAttribute('id');
 		};
 	};
+	
+	var createAuthor = function (){
+		
+	}
+	
+	var createForm = function (createButton){
+		createButton.style.display = 'none';
+		var form = document.createElement("form");
+		form.setAttribute("charset", "UTF-8");
+		form.setAttribute("class", "author-form")
+		form.setAttribute("method", "Post");
+		form.setAttribute("action", "/author/create");   // 전송할 url
+
+		var list = document.createElement('ul');
+		var arr = ['Author', 'Profile']
+		for (var item in arr){
+			const li = document.createElement("li");
+			const label = document.createElement("span");
+			label.innerHTML = arr[item];
+			const input = document.createElement("input");
+			input.setAttribute("type", "text");
+			input.setAttribute("name", "name");
+			li.appendChild(label);
+			li.appendChild(input);
+			list.appendChild(li);
+		};
+		
+		const submit = document.createElement("input");
+		submit.setAttribute("type", "submit");
+		submit.setAttribute("value", "Create");
+		submit.setAttribute("class", "button-edit");
+		form.appendChild(list);
+		form.appendChild(submit);
+		var div = document.querySelector('.author-edit-area');
+		div.appendChild(form);
+	}
+	
+	var tableLayout = function (){
+		var table = document.createElement('table');
+		table.setAttribute('id', 'author-table');
+		var idx = document.createElement('th');
+		idx.setAttribute('class', 'table-idx');
+		idx.innerHTML = '#';
+		table.appendChild(idx);
+		var thlist = ['Author', 'Profile', 'Update', 'Delete']
+		for (var i in thlist){
+			var cell = document.createElement('th');
+			cell.innerHTML = thlist[i];
+			table.appendChild(cell);
+		}
+		const div = document.createElement("div");
+		div.setAttribute('class', 'author-edit-area');
+		const create = document.createElement("button");
+		create.innerHTML = "Create";
+		create.setAttribute('class', 'button-edit');
+		create.setAttribute('onclick', 'createForm(this);');
+		div.appendChild(create);
+		document.querySelector('.right').innerHTML = ``;
+		document.querySelector('.right').appendChild(div);
+		document.querySelector('.right').appendChild(table);
+		return table;
+	}
 
 	var authorPage = function(more){
 		var loadDB = function (more, start) {
 			if (start === 0){
-				var table = document.createElement('table');
-				table.setAttribute('id', 'author-table');
-				var idx = document.createElement('th');
-				idx.setAttribute('class', 'table-idx');
-				idx.innerHTML = '#';
-				table.appendChild(idx);
-				var thlist = ['Author', 'Profile', 'Update', 'Delete']
-				for (var i in thlist){
-					var cell = document.createElement('th');
-					cell.innerHTML = thlist[i];
-					table.appendChild(cell);
-				}
+				var table = tableLayout();
 			} else {
 				var table = document.getElementById('author-table');
 			}
@@ -418,8 +491,7 @@
 						table.appendChild(rowsFragment);
 					};
 
-					document.querySelector('.right').innerHTML = ``;
-					document.querySelector('.right').appendChild(table);
+					table.replaceWith(table);
 					
 					if (data.length < more){
 						const loaded = document.createElement("p");
@@ -489,7 +561,7 @@
         <div class="topic-list">topic-list</div>
         <div class="page-bar">page-bar</div>
       </div>
-      <div class="right">right</div>
+		<div class="right">right</div>
     </div>
   </body>
 </html>
