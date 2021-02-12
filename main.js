@@ -32,7 +32,6 @@ var app = http.createServer(function(request, response){
 				};
 				list += `\n			  </ol>
 					</div>`;
-			  console.log(list);
 			  response.writeHead(200);
 		      response.write(list);
 			  response.end();
@@ -91,7 +90,7 @@ var app = http.createServer(function(request, response){
 			response.writeHead(404);
 			response.end('Data Not Found');
 		} else {
-			var query = `SELECT JSON_ARRAYAGG(JSON_OBJECT('name', name, 'profile', profile)) as 'result' FROM (SELECT name, profile FROM authorTest LIMIT ? OFFSET ?)sub`;
+			var query = `SELECT JSON_ARRAYAGG(JSON_OBJECT('id', id, 'name', name, 'profile', profile)) as 'result' FROM (SELECT id, name, profile FROM authorTest LIMIT ? OFFSET ?)sub`;
 			db.query(query, [more, start], function(err, data){
 				response.writeHead(200, { 'Content-Type': 'application/json' });
 				var result = data[0]['result'];
@@ -113,7 +112,7 @@ var app = http.createServer(function(request, response){
 			}
 			if (dataJSON['Author'] === '') {
 				var msg = { result: false,
-						    error: 'empty'
+						    status: 'empty'
 						  }
 				response.writeHead(200, {'Content-Type': 'application/json'});
 				response.end(JSON.stringify(msg));
@@ -125,14 +124,55 @@ var app = http.createServer(function(request, response){
 						db.query(query, [dataJSON['Author'], dataJSON['Profile']], function(err2, result2){
 							if (err2) {throw err2};
 							var msg = { result: true,
-										authorID: result2.insertId
+										authorID: result2.insertId,
+									    status: 'created'
 									  }
 							response.writeHead(200, {'Content-Type': 'application/json'});
 							response.end(JSON.stringify(msg));
 						})
 					} else {   // 있으면
 						var msg = { result: false,
-									error: 'duplicated'
+									status: 'duplicated'
+								  }
+						response.writeHead(200, {'Content-Type': 'application/json'});
+						response.end(JSON.stringify(msg));
+					}
+				});
+			}
+		});
+
+	} else if (url_parsed[1] === 'author' && url_parsed[2] === 'update'){
+		var body = '';
+		request.on('data', function(data){  // 데이터 받아오기
+	        body += data;
+			try {
+				var dataJSON = JSON.parse(data);
+			} catch(err) {
+				console.error(err);
+			}
+			if (dataJSON['Author'] === '') {  // 이름이 없으면
+				var msg = { result: false,
+						    status: 'empty'
+						  }
+				response.writeHead(200, {'Content-Type': 'application/json'});
+				response.end(JSON.stringify(msg));
+			} else {
+				db.query('SELECT EXISTS(SELECT * FROM authorTest WHERE name = ? AND id != ?) AS dup;', [dataJSON['Author'], dataJSON['id']], function(err1, result1){
+					if (err1) {throw err1};
+					if (result1[0].dup === 0){  // 같은 이름이 없으면
+						var query = `UPDATE authorTest SET name=?, profile=? WHERE id=?`;
+						db.query(query, [dataJSON['Author'], dataJSON['Profile'], dataJSON['id']], function(err2, result2){
+							if (err2) {throw err2};
+							var msg = { result: true,
+										authorID: result2.insertId,
+									    status: 'updated'
+									  }
+							response.writeHead(200, {'Content-Type': 'application/json'});
+							response.end(JSON.stringify(msg));
+						})
+					} else {
+						var msg = { result: false,
+									status: 'duplicated'
 								  }
 						response.writeHead(200, {'Content-Type': 'application/json'});
 						response.end(JSON.stringify(msg));
