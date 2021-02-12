@@ -1,0 +1,237 @@
+
+	.banner {
+		background: whitesmoke;
+		height: 140px;
+		margin: 0;
+		padding: 0;
+		position: absolute;
+		width: 100%;
+	}
+	.content-edit {
+    	display: none;
+    }
+	.edit div {
+		color: white;
+	}
+	.left {
+		background-color: #D1CCD9;
+		display: grid;
+		margin-top: 160px;
+		padding: 20px;
+	}
+	.main {
+		display: grid;
+		grid-template-columns: 1fr 3fr;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	.right {
+		background-color: gray;
+		font-size: 20px;
+		margin-top: 160px;
+		padding: 20px;
+	}
+	.edit-menu ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+	.edit-menu li {
+		font-size: 18px;
+		float: left;
+		padding: 20px;
+	}
+	.edit-menu li:hover {
+		background-color: #111111;
+	}
+	.sort-bar {
+		text-align: left;
+	}
+	.sort-bar select {
+		font-size: 16px;
+		padding: .6em;
+		margin: 0;
+		border: 1px solid #aaa;
+		border-radius: .5em;
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		appearance: none;
+		background-color: #fff;
+		background-repeat: no-repeat, repeat;
+		width: 90%;
+		text-align: center;
+	}
+	.sort-button:hover {
+		background-color: #A59BB5;
+	}
+	h1 {
+		font-size: 40px;
+		text-align: center;
+		padding: 5px;
+	}
+	html, body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+	}
+	nav {
+		background-color: #333333;
+		display: grid;
+		grid-template-columns: 1.5fr 1fr;
+		margin: 0;
+		height: 60px;
+	}
+	.search-form {
+		text-align: right;
+		margin: auto 10px auto auto;
+	}
+	.search-bar {
+		font-size: 14px;
+		padding: 3px;
+	}
+	.search-button {
+		background: #8E82A2;
+		border: none;
+		border-radius: 3px;
+		color: whitesmoke;
+		cursor: pointer;	
+		font-size: 16px;
+		padding: 4px 6px 6px 6px;
+	}
+	.search-button:hover {
+		background-color: #A59BB5;
+	}
+	#active {
+		color: red;
+		pointer-events: none;
+	    cursor: default;
+		text-decoration: none;
+	}
+	.topic-list ol {
+	  width: 90%;
+	  padding: 0 0 0 40px;
+	}
+
+	.topic-list li {
+	  color: inherit;
+	  padding: 3px;
+	}
+
+	.topic-list a:hover {
+	  background-color: inherit;
+	  color: red;
+	}
+
+	#current-page {
+	  background: #F6F6F6;
+	  cursor: default;
+	}
+
+	.page-bar {
+	  padding: 7px;
+	  min-height: 150px;
+	}
+
+	.button-page {
+	  background: transparent;
+	  border: none;
+	  border-radius: 10px;
+	  cursor: pointer;	
+	  float: left;
+	  font-size: 14px;
+	  margin: 0 0 30px 0;
+	  padding: 5px;
+	  width: 32px;
+	}
+
+	.button-page:hover{
+	  background: #e8e6e4;
+	}
+	.home {
+		font-family: cursive;
+		font-size: 100px;
+		text-align: center;
+	}
+	.author {
+		color: #C7C7C7;
+		text-align: right;
+	}
+	.name {
+		color: #D0D1CD;
+	}
+	#author-table {
+		border: none;
+		border-collapse: collapse;
+		padding: 10px;
+		margin: 10px;
+	}
+	.table-idx {
+		background-color: gray;
+		border-bottom: gray;
+		color: #D7D7D7;
+		padding: 1px;
+		text-align: center;
+		min-width: 15px;
+		max-width: 18px;
+	}
+	#author-table td {
+		border-bottom: 1px solid #ddd;
+		color: whitesmoke;
+		padding: 5px 6px 5px 10px;
+		border-left: none;
+		border-right: none;
+		width: 100px;
+	}
+
+	#author-table th {
+		border-bottom: 1px solid #ddd;
+		padding: 5px;
+		background-color: gray;
+		color: #D7D7D7;
+		min-width: 60px;
+	}
+	.button-edit {
+		margin: 0 15px;
+		background: #666666;
+		border: none;
+		border-radius: 3px;
+		color: whitesmoke;
+		cursor: pointer;	
+		font-size: 16px;
+		padding: 4px 6px 6px 6px;
+	}
+	.loaded {
+		text-align: center;
+		padding: 20px;
+		color: whitesmoke;
+		font-size: 15px;
+	}
+	.author-edit-area {
+		min-height: 50px;
+		padding: 20px 0 0 0;
+		margin: 0;
+	}
+	.author-edit-area button, .author-edit-area .button-edit {
+		float: right;
+		margin: 0 5px 0 0;
+	}
+	.author-edit-area ul {
+		display: inline;
+		margin: 0;
+		padding: 0;
+	}
+	.author-edit-area ul li {
+		display: inline;
+		padding: 0;
+		margin: 0;
+	}
+	.author-edit-area label {
+		padding: 0 10px 0 25px;
+	}
+	.insert-msg {
+		padding: 0 25px;
+		font-size: 15px;
+	}

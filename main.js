@@ -18,8 +18,16 @@ var app = http.createServer(function(request, response){
 	var hash = pathname.hash;
 	url_parsed = pathname.split('/');
 
-	
-	if (url_parsed[1] === 'topic'){
+	if (url_parsed[1] === 'public' && fs.existsSync(__dirname + '/public/' + url_parsed[2])) {
+	    var ext = path.parse(pathname).ext.replace(".", "");
+		if (ext === 'css') {
+			var mime = `text/css`
+		} else if (ext === 'js') {
+			var mime = `application/js`;
+		}
+		response.writeHead(200, {'Content-Type': mime});
+		response.end(fs.readFileSync(__dirname + '/public/' + url_parsed[2], 'utf8'));
+  } else if (url_parsed[1] === 'topic'){
 			var page = Number(url_parsed[3]);
 		if (['title-asc', 'title-desc', 'created-asc', 'created-desc'].includes(url_parsed[2])){
 			if (Number.isInteger(page)){
