@@ -181,6 +181,24 @@ var app = http.createServer(function(request, response){
 			}
 		});
 
+	} else if (url_parsed[1] === 'author' && url_parsed[2] === 'delete'){
+		var body = '';
+		request.on('data', function(data){  // 데이터 받아오기
+	        body += data;
+			try {
+				var dataJSON = JSON.parse(data);
+			} catch(err) {
+				console.error(err);
+			}
+			db.query('DELETE FROM authorTest WHERE id=?', dataJSON.id, function(err, result){
+				if (err) {throw err};
+				var msg = { result: true,
+							status: 'deleted'
+						  }
+				response.writeHead(200, {'Content-Type': 'application/json'})
+				response.end(JSON.stringify(msg));
+			});
+		});
 	} else if (url_parsed[1] === 'rank') {
 		var sortBy = url_parsed[2];
 		var id = Number(url_parsed[3]);

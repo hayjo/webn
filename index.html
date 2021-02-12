@@ -379,6 +379,14 @@
 	};
 		
 	window.addEventListener("load", viewTopicNBar());
+		
+	async function reallyDelete(event){
+		event.preventDefault();
+		var answer = confirm('Do you want to delete this file?');
+		if (answer){
+			authorHandler(event);
+		}
+	}
 
 	var loadAuthor = function (start){
 		fetch(`author/view/${start}/1`).then(function(response){
@@ -394,7 +402,7 @@
 		});
 	}
 
-	var isInsertDone = function (responseData){
+	var completeMSG = function (responseData){
 		const success = responseData.result;
 		if (success) {
 			authorPage();
@@ -417,7 +425,10 @@
 			msg.innerHTML = 'Your Author name already exists ... ';
 		} else if (status === 'empty'){
 			msg.innerHTML = 'Please type Author Name ... ';
+		} else if (status === 'deleted'){
+			msg.innerHTML = 'Your data has been deleted successfully.';
 		}
+		
 		if (msg.style.color === 'rgb(254, 231, 244)'){
 			msg.style.color = 'rgb(240, 197, 211)';
 		} else {
@@ -446,7 +457,7 @@
 		try {
 			const formData = new FormData(form);
 			const responseData = await postFormDataAsJson({url, formData});
-			isInsertDone(responseData);
+			completeMSG(responseData);
 		} catch(err){
 			console.error(err);
 		}
@@ -580,11 +591,24 @@
 						button1.setAttribute('onclick', `loadAuthor(${start-1})`);
 						button1.innerHTML = 'Update';
 						cell4.appendChild(button1);
+						
 						const cell5 = document.createElement("td");
-						const button2 = document.createElement("button");
-						button2.setAttribute('class', 'button-edit');
-						button2.innerHTML = 'Delete';
-						cell5.appendChild(button2);
+						var deleteForm = document.createElement("form");
+						deleteForm.setAttribute("method", "Post");
+						deleteForm.setAttribute("action", '/author/delete');
+						const deleteID = document.createElement("input");
+						deleteID.setAttribute("type", "hidden");
+						deleteID.setAttribute("name", "id");
+						deleteID.setAttribute("value", data[i]['id']);
+						deleteForm.appendChild(deleteID);
+						const deleteSubmit = document.createElement("input");
+						deleteSubmit.setAttribute("value", 'Delete');
+						deleteSubmit.setAttribute('class', 'button-edit');
+						deleteSubmit.setAttribute("type", "submit");
+						deleteForm.addEventListener("submit", reallyDelete);
+						deleteForm.appendChild(deleteSubmit);
+						cell5.appendChild(deleteForm);
+
 						row.appendChild(cell1);
 						row.appendChild(cell2);
 						row.appendChild(cell3);
