@@ -118,18 +118,18 @@ var app = http.createServer(function(request, response){
 			} catch(err) {
 				console.error(err);
 			}
-			if (dataJSON['Author'] === '') {
+			if (dataJSON.name === '') {
 				var msg = { result: false,
 						    status: 'empty'
 						  }
 				response.writeHead(200, {'Content-Type': 'application/json'});
 				response.end(JSON.stringify(msg));
 			} else {
-				db.query('SELECT EXISTS(SELECT * FROM authorTest WHERE name = ?) AS dup;', dataJSON['Author'], function(err1, result1){
+				db.query('SELECT EXISTS(SELECT * FROM authorTest WHERE name = ?) AS dup;', dataJSON['name'], function(err1, result1){
 					if (err1) {throw err1};
 					if (result1[0].dup === 0){  // 같은 이름이 없으면
 						var query = `INSERT INTO authorTest (name, profile) VALUES (?, ?)`;
-						db.query(query, [dataJSON['Author'], dataJSON['Profile']], function(err2, result2){
+						db.query(query, [dataJSON['name'], dataJSON['profile']], function(err2, result2){
 							if (err2) {throw err2};
 							var msg = { result: true,
 										authorID: result2.insertId,
@@ -158,7 +158,7 @@ var app = http.createServer(function(request, response){
 			} catch(err) {
 				console.error(err);
 			}
-			if (dataJSON['Author'] === '') {  // 이름이 없으면
+			if (dataJSON['name'] === '') {  // 이름이 없으면
 				var msg = { result: false,
 						    status: 'empty'
 						  }
@@ -169,7 +169,7 @@ var app = http.createServer(function(request, response){
 					if (err1) {throw err1};
 					if (result1[0].dup === 0){  // 같은 이름이 없으면
 						var query = `UPDATE authorTest SET name=?, profile=? WHERE id=?`;
-						db.query(query, [dataJSON['Author'], dataJSON['Profile'], dataJSON['id']], function(err2, result2){
+						db.query(query, [dataJSON['name'], dataJSON['profile'], dataJSON['id']], function(err2, result2){
 							if (err2) {throw err2};
 							var msg = { result: true,
 										authorID: result2.insertId,
