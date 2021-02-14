@@ -23,7 +23,7 @@ var app = http.createServer(function(request, response){
 		if (ext === 'css') {
 			var mime = `text/css`
 		} else if (ext === 'js') {
-			var mime = `application/js`;
+			var mime = `application/javascript`;
 		}
 		response.writeHead(200, {'Content-Type': mime});
 		response.end(fs.readFileSync(__dirname + '/public/' + url_parsed[2], 'utf8'));

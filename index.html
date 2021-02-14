@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <title>Lorem ipsum dolor sit amet</title>
     <link rel="stylesheet" type="text/css" href="public/style.css">
-	<script src="public/AuthorTable.js"></script>
-    <script src="public/left.js"></script>
 	<script>
 	var hash_title = location.hash.replace("!", "").replace("#", "");
 	if(hash_title){
@@ -15,7 +13,6 @@
 			})
 		})
 	};
-		
 	var onEdit = function(none){
 		var content_edit = document.querySelectorAll('.content-edit');
 		var change = 'inline';
@@ -45,12 +42,14 @@
 	  
   </head>
   <body>
+	<script src="public/AuthorTable.js"></script>
+    <script src="public/left.js"></script>
     <div class="banner">
       <h1><span onclick="home();">Lorem ipsum dolor sit amet</span></h1>
       <nav class="edit">
         <div class="edit-menu">
 		  <ul>
-			  <li onclick="Table.get();">AuthorTable</li>
+			  <li onclick="Table.new();">AuthorTable</li>
 			  <li>Create</li>
 			  <li class="content-edit">Update</li>
 			  <li class="content-edit">Delete</li>

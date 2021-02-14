@@ -1,3 +1,15 @@
+
+var home = function(){
+	var content = `<p class="home">Hello world!</p>`;
+	document.querySelector('.right').innerHTML = content;
+	window.location.hash = '';
+	onEdit('none');
+	var current = document.getElementById("active");
+	if (current !== null){
+		current.removeAttribute('id');
+	};
+};
+
 var activeRed = function(){
 	var topics = document.querySelectorAll('.topic-item');
 	for (var i = 0; i < topics.length; i++) {
